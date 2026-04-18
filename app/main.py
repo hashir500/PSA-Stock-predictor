@@ -95,32 +95,42 @@ MODELS_DIR = '../models'
 DATA_DIR = '../data'
 
 @st.cache_data(ttl=300) # Cache for 5 mins
-def fetch_today_data():
-    today_data = {}
+def fetch_target_data(target_date):
+    target_data = {}
+    import pandas as pd
+    target_dt = pd.to_datetime(target_date)
+    start_date = (target_dt - pd.Timedelta(days=14)).strftime('%Y-%m-%d')
+    end_date = (target_dt + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
+    
     for name, ticker in TICKERS.items():
         try:
-            # We fetch 5 days to ensure we have the very latest Previous Close and Today's Open
-            df = yf.download(ticker, period="5d", interval="1d", progress=False)
+            df = yf.download(ticker, start=start_date, end=end_date, progress=False)
             if not df.empty:
                 if isinstance(df.columns, pd.MultiIndex):
                     df.columns = [col[0] for col in df.columns]
                 
-                latest = df.iloc[-1]
-                prev = df.iloc[-2] if len(df) > 1 else latest
+                # Filter to only rows on or before the target date
+                df = df[df.index <= pd.Timestamp(target_date)]
                 
-                today_data[name] = {
-                    'Open': float(latest['Open']),
-                    'High': float(latest['High']),
-                    'Low': float(latest['Low']),
-                    'Close': float(latest['Close']),
-                    'Volume': float(latest['Volume']),
-                    'Prev_Close': float(prev['Close']),
-                    'Prev_High': float(prev['High']),
-                    'Prev_Low': float(prev['Low'])
-                }
+                if len(df) > 0:
+                    latest = df.iloc[-1]
+                    prev = df.iloc[-2] if len(df) > 1 else latest
+                    actual_date = df.index[-1].strftime('%Y-%m-%d')
+                    
+                    target_data[name] = {
+                        'Actual_Date': actual_date,
+                        'Open': float(latest['Open']),
+                        'High': float(latest['High']),
+                        'Low': float(latest['Low']),
+                        'Close': float(latest['Close']),
+                        'Volume': float(latest['Volume']),
+                        'Prev_Close': float(prev['Close']),
+                        'Prev_High': float(prev['High']),
+                        'Prev_Low': float(prev['Low'])
+                    }
         except Exception:
             pass
-    return today_data
+    return target_data
 
 @st.cache_resource
 def load_models():
@@ -162,7 +172,16 @@ def make_prediction(models, data, name):
     return None
 
 def main():
-    today_data = fetch_today_data()
+    import datetime
+    
+    col_title, col_picker = st.columns([3, 1])
+    with col_title:
+        st.markdown("### Market Dashboard")
+    with col_picker:
+        min_date = datetime.date.today() - datetime.timedelta(days=700)
+        target_date = st.date_input("Select Target Date", datetime.date.today(), min_value=min_date, max_value=datetime.date.today())
+        
+    today_data = fetch_target_data(target_date)
     models = load_models()
     metrics = load_metrics()
     
@@ -198,7 +217,7 @@ def main():
                 st.markdown(f"""
                 <div class="metric-card">
                     <h2>{name} {badge_html}</h2>
-                    <div style="font-size: 0.9rem; color: #888;">{ticker}</div>
+                    <div style="font-size: 0.9rem; color: #888;">{ticker} | Data for: {current_data.get('Actual_Date', '')}</div>
                     <div class="price {color_class}">
                         Rs {actual_close:.2f}
                         <span style="font-size: 1rem; opacity: 0.8;">({sign}{diff:.2f})</span>
@@ -206,6 +225,7 @@ def main():
                     <div class="prediction">Predicted Close: <strong>{pred_close:.2f}</strong></div>
                     <div class="prediction">Predicted High: <strong>{preds['High']:.2f}</strong> | Actual High: {current_data['High']:.2f}</div>
                     <div class="prediction">Predicted Low: <strong>{preds['Low']:.2f}</strong> | Actual Low: {current_data['Low']:.2f}</div>
+                    <div class="prediction" style="margin-top:5px; border-top:1px solid rgba(255,255,255,0.1); padding-top:5px;">Open: {current_data['Open']:.2f}</div>
                 </div>
                 """, unsafe_allow_html=True)
             else:
