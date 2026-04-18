@@ -91,8 +91,11 @@ TICKERS = {
     'MEZAN': 'MEBL.KA', 'NATF': 'NATF.KA', 'TGL': 'TGL.KA', 'SYS': 'SYS.KA'
 }
 
-MODELS_DIR = '../models'
-DATA_DIR = '../data'
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODELS_DIR = os.path.join(BASE_DIR, 'models')
+DATA_DIR = os.path.join(BASE_DIR, 'data')
 
 @st.cache_data(ttl=300) # Cache for 5 mins
 def fetch_target_data_v3(target_date):
