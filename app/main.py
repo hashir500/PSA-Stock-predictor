@@ -191,6 +191,8 @@ def make_prediction(models, data, name):
     return None
 
 TIMEFRAME_DAYS = {
+    "1 Day": 1,
+    "1 Week": 7,
     "1 Month": 30,
     "3 Months": 90,
     "1 Year": 365
@@ -299,9 +301,18 @@ def main():
                 mae_str = m_info["MAE_Pct"]
                 badge_html = f"<span class='badge'>MAE: {mae_str}%</span>" if mae_str != "--" else ""
                 
+                # Actionable Badge Logic (Phase 1)
+                margin = (pred_close - current_data['Open']) / current_data['Open']
+                if margin > 0.005:
+                    action_badge = "<span style='background: rgba(0, 255, 194, 0.15); color: #00FFC2; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(0, 255, 194, 0.4); margin-left: 10px; vertical-align: middle; float: right;'>STRONG BUY</span>"
+                elif margin < -0.005:
+                    action_badge = "<span style='background: rgba(252, 92, 101, 0.15); color: #FC5C65; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(252, 92, 101, 0.4); margin-left: 10px; vertical-align: middle; float: right;'>AVOID</span>"
+                else:
+                    action_badge = "<span style='background: rgba(255, 255, 255, 0.1); color: #ccc; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2); margin-left: 10px; vertical-align: middle; float: right;'>HOLD</span>"
+                
                 st.markdown(f"""
                 <div class="metric-card">
-                    <h2>{name} {badge_html}</h2>
+                    <h2>{name} {badge_html} {action_badge}</h2>
                     <div style="font-size: 0.9rem; color: #888;">{ticker} | Date: {current_data.get('Actual_Date', '')}</div>
                     <div class="price {color_class}">
                         Rs {actual_close:.2f}
@@ -352,7 +363,7 @@ def main():
     with c1:
         selected_stock = st.selectbox("Select Stock For Deep Dive", list(TICKERS.keys()))
     with c2:
-        selected_timeframe = st.radio("Timeframe", ["1 Month", "3 Months", "1 Year"], horizontal=True)
+        selected_timeframe = st.radio("Timeframe", ["1 Day", "1 Week", "1 Month", "3 Months", "1 Year"], horizontal=True, index=2)
         
     ticker_sym = TICKERS[selected_stock]
     df_hist = fetch_historical_series(ticker_sym, target_date, selected_timeframe)
@@ -362,6 +373,12 @@ def main():
         df_plot = vectorize_predictions(df_hist, model_close)
         
         if not df_plot.empty:
+            # Filter the plot to visually isolate only the precise timeframe requested
+            import pandas as pd
+            days_back = TIMEFRAME_DAYS.get(selected_timeframe, 30)
+            cutoff = pd.Timestamp(target_date) - pd.Timedelta(days=days_back)
+            df_plot = df_plot[df_plot.index >= cutoff]
+            
             st.line_chart(df_plot, color=["#FC5C65", "#00FFC2"]) # Lava Core for Actual, Carbon Mint for Predicted
         else:
             st.warning("Insufficient continuous data to plot predictions.")
