@@ -210,6 +210,14 @@ def main():
                 color_class = "carbon-mint" if diff >= 0 else "lava-core"
                 sign = "+" if diff >= 0 else ""
                 
+                h_diff = current_data['High'] - preds['High']
+                h_sign = "+" if h_diff >= 0 else ""
+                h_color = "#00FFC2" if h_diff >= 0 else "#FC5C65"
+
+                l_diff = current_data['Low'] - preds['Low']
+                l_sign = "+" if l_diff >= 0 else ""
+                l_color = "#00FFC2" if l_diff >= 0 else "#FC5C65"
+                
                 # Check accuracy badge
                 mae_str = m_info["MAE_Pct"]
                 badge_html = f"<span class='badge'>MAE: {mae_str}%</span>" if mae_str != "--" else ""
@@ -217,15 +225,37 @@ def main():
                 st.markdown(f"""
                 <div class="metric-card">
                     <h2>{name} {badge_html}</h2>
-                    <div style="font-size: 0.9rem; color: #888;">{ticker} | Data for: {current_data.get('Actual_Date', '')}</div>
+                    <div style="font-size: 0.9rem; color: #888;">{ticker} | Date: {current_data.get('Actual_Date', '')}</div>
                     <div class="price {color_class}">
                         Rs {actual_close:.2f}
                         <span style="font-size: 1rem; opacity: 0.8;">({sign}{diff:.2f})</span>
                     </div>
-                    <div class="prediction">Predicted Close: <strong>{pred_close:.2f}</strong></div>
-                    <div class="prediction">Predicted High: <strong>{preds['High']:.2f}</strong> | Actual High: {current_data['High']:.2f}</div>
-                    <div class="prediction">Predicted Low: <strong>{preds['Low']:.2f}</strong> | Actual Low: {current_data['Low']:.2f}</div>
-                    <div class="prediction" style="margin-top:5px; border-top:1px solid rgba(255,255,255,0.1); padding-top:5px;">Open: {current_data['Open']:.2f}</div>
+                    <table style="width:100%; text-align:left; font-size:0.85rem; border-collapse:collapse; margin-top:15px; background: rgba(0,0,0,0.2); border-radius:8px; overflow:hidden;">
+                        <tr style="background: rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.1);">
+                            <th style="padding:6px 10px; color:#aaa; font-weight:500;">Metric</th>
+                            <th style="padding:6px 10px; color:#aaa; font-weight:500;">Predicted</th>
+                            <th style="padding:6px 10px; color:#aaa; font-weight:500;">Actual</th>
+                            <th style="padding:6px 10px; color:#aaa; font-weight:500;">Diff</th>
+                        </tr>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                            <td style="padding:6px 10px; color:#ddd;">High</td>
+                            <td style="padding:6px 10px;">{preds['High']:.2f}</td>
+                            <td style="padding:6px 10px;">{current_data['High']:.2f}</td>
+                            <td style="padding:6px 10px; color:{h_color};">{h_sign}{h_diff:.2f}</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                            <td style="padding:6px 10px; color:#ddd;">Low</td>
+                            <td style="padding:6px 10px;">{preds['Low']:.2f}</td>
+                            <td style="padding:6px 10px;">{current_data['Low']:.2f}</td>
+                            <td style="padding:6px 10px; color:{l_color};">{l_sign}{l_diff:.2f}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:6px 10px; color:#ddd;">Open</td>
+                            <td style="padding:6px 10px; color:#888;">--</td>
+                            <td style="padding:6px 10px;">{current_data['Open']:.2f}</td>
+                            <td style="padding:6px 10px; color:#888;">--</td>
+                        </tr>
+                    </table>
                 </div>
                 """, unsafe_allow_html=True)
             else:
