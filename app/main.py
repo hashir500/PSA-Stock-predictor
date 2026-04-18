@@ -95,7 +95,7 @@ MODELS_DIR = '../models'
 DATA_DIR = '../data'
 
 @st.cache_data(ttl=300) # Cache for 5 mins
-def fetch_target_data(target_date):
+def fetch_target_data_v2(target_date):
     target_data = {}
     import pandas as pd
     target_dt = pd.to_datetime(target_date)
@@ -192,7 +192,7 @@ def main():
         min_date = datetime.date.today() - datetime.timedelta(days=700)
         target_date = st.date_input("Select Target Date", datetime.date.today(), min_value=min_date, max_value=datetime.date.today())
         
-    today_data = fetch_target_data(target_date)
+    today_data = fetch_target_data_v2(target_date)
     models = load_models()
     metrics = load_metrics()
     
