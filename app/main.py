@@ -95,7 +95,7 @@ MODELS_DIR = '../models'
 DATA_DIR = '../data'
 
 @st.cache_data(ttl=300) # Cache for 5 mins
-def fetch_target_data_v2(target_date):
+def fetch_target_data_v3(target_date):
     target_data = {}
     import pandas as pd
     target_dt = pd.to_datetime(target_date)
@@ -108,6 +108,10 @@ def fetch_target_data_v2(target_date):
             if not df.empty:
                 if isinstance(df.columns, pd.MultiIndex):
                     df.columns = [col[0] for col in df.columns]
+                
+                # Force index to be timezone-naive to prevent TypeError crash
+                if df.index.tz is not None:
+                    df.index = df.index.tz_localize(None)
                 
                 # Filter to only rows on or before the target date
                 df = df[df.index <= pd.Timestamp(target_date)]
@@ -130,8 +134,10 @@ def fetch_target_data_v2(target_date):
                         'Prev_Low': float(prev['Low']),
                         'Old_Prev_Close': float(old_prev['Close'])
                     }
-        except Exception:
-            pass
+        except Exception as e:
+            import traceback
+            with open('debug_log.txt', 'a') as f:
+                f.write(f"Error in fetch for {name}:\\n{traceback.format_exc()}\\n")
     return target_data
 
 @st.cache_resource
@@ -178,8 +184,10 @@ def make_prediction(models, data, name):
                 'Low': open_price * (1 + pred_l_pct),
                 'Close': open_price * (1 + pred_c_pct)
             }
-    except Exception:
-        pass
+    except Exception as e:
+        import traceback
+        with open('debug_log.txt', 'a') as f:
+            f.write(f"Error in make_prediction for {name}:\\n{traceback.format_exc()}\\n")
     return None
 
 def main():
@@ -192,7 +200,8 @@ def main():
         min_date = datetime.date.today() - datetime.timedelta(days=700)
         target_date = st.date_input("Select Target Date", datetime.date.today(), min_value=min_date, max_value=datetime.date.today())
         
-    today_data = fetch_target_data_v2(target_date)
+    today_data = fetch_target_data_v3(target_date)
+    st.write(f"DEBUG: Retrieved {len(today_data)} stocks data. Target: {target_date}")
     models = load_models()
     metrics = load_metrics()
     
