@@ -223,6 +223,22 @@ def fetch_historical_series(ticker, target_date, timeframe_str):
         return None
     return df
 
+@st.cache_data(ttl=86400) # Cache fundamentals for 24 hours to prevent yfinance IP bans
+def fetch_fundamentals(ticker_sym):
+    import yfinance as yf
+    try:
+        tk_obj = yf.Ticker(ticker_sym)
+        return tk_obj.info
+    except:
+        return {}
+
+def format_large_number(num):
+    if not isinstance(num, (int, float)):
+        return "--"
+    if num >= 1e9: return f"Rs {num/1e9:.2f}B"
+    if num >= 1e6: return f"Rs {num/1e6:.2f}M"
+    return f"Rs {num:,.0f}"
+
 def vectorize_predictions(df, model):
     import pandas as pd
     
@@ -247,7 +263,7 @@ def vectorize_predictions(df, model):
     df['Actual'] = df['Close']
     df['Predicted'] = df['Predicted_Close']
     
-    return df[['Actual', 'Predicted']]
+    return df[['Actual', 'Predicted', 'Open']]
 
 def main():
     import datetime
@@ -301,18 +317,9 @@ def main():
                 mae_str = m_info["MAE_Pct"]
                 badge_html = f"<span class='badge'>MAE: {mae_str}%</span>" if mae_str != "--" else ""
                 
-                # Actionable Badge Logic (Phase 1)
-                margin = (pred_close - current_data['Open']) / current_data['Open']
-                if margin > 0.005:
-                    action_badge = "<span style='background: rgba(0, 255, 194, 0.15); color: #00FFC2; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(0, 255, 194, 0.4); margin-left: 10px; vertical-align: middle; float: right;'>STRONG BUY</span>"
-                elif margin < -0.005:
-                    action_badge = "<span style='background: rgba(252, 92, 101, 0.15); color: #FC5C65; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(252, 92, 101, 0.4); margin-left: 10px; vertical-align: middle; float: right;'>AVOID</span>"
-                else:
-                    action_badge = "<span style='background: rgba(255, 255, 255, 0.1); color: #ccc; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2); margin-left: 10px; vertical-align: middle; float: right;'>HOLD</span>"
-                
                 st.markdown(f"""
                 <div class="metric-card">
-                    <h2>{name} {badge_html} {action_badge}</h2>
+                    <h2>{name} {badge_html}</h2>
                     <div style="font-size: 0.9rem; color: #888;">{ticker} | Date: {current_data.get('Actual_Date', '')}</div>
                     <div class="price {color_class}">
                         Rs {actual_close:.2f}
@@ -367,6 +374,22 @@ def main():
         
     ticker_sym = TICKERS[selected_stock]
     df_hist = fetch_historical_series(ticker_sym, target_date, selected_timeframe)
+    funds = fetch_fundamentals(ticker_sym)
+    
+    # Financial Mini-HUD
+    mcap = format_large_number(funds.get("marketCap"))
+    pe = funds.get("trailingPE", "--")
+    if isinstance(pe, float): pe = round(pe, 2)
+    dy = funds.get("dividendYield", "--")
+    if isinstance(dy, float): dy = f"{round(dy*100, 2)}%"
+    
+    st.markdown(f"""
+    <div style="display:flex; justify-content: space-around; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+        <div><div style="color:#888; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">Market Cap</div> <div style="font-size:1.2rem; font-weight:700;">{mcap}</div></div>
+        <div><div style="color:#888; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">P/E Ratio</div> <div style="font-size:1.2rem; font-weight:700;">{pe}</div></div>
+        <div><div style="color:#888; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">Dividend Yield</div> <div style="font-size:1.2rem; font-weight:700; color:#00FFC2;">{dy}</div></div>
+    </div>
+    """, unsafe_allow_html=True)
     
     if df_hist is not None and not df_hist.empty:
         model_close = models[selected_stock]['close']
@@ -379,7 +402,14 @@ def main():
             cutoff = pd.Timestamp(target_date) - pd.Timedelta(days=days_back)
             df_plot = df_plot[df_plot.index >= cutoff]
             
-            st.line_chart(df_plot, color=["#FC5C65", "#00FFC2"]) # Lava Core for Actual, Carbon Mint for Predicted
+            st.line_chart(df_plot[['Actual', 'Predicted']], color=["#FC5C65", "#00FFC2"]) # Lava Core for Actual, Carbon Mint for Predicted
+            
+            # Phase 3: Volume Histogram Sync
+            df_vol = df_hist[df_hist.index >= cutoff][['Volume']]
+            if not df_vol.empty:
+                st.markdown("<div style='text-align:center; font-size: 0.8rem; color:#888; margin-top:-20px; margin-bottom:-10px;'>End Of Day Volume Flow</div>", unsafe_allow_html=True)
+                st.bar_chart(df_vol, height=150, color="#1E232E")
+
         else:
             st.warning("Insufficient continuous data to plot predictions.")
     else:
