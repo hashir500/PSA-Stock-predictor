@@ -115,6 +115,7 @@ def fetch_target_data(target_date):
                 if len(df) > 0:
                     latest = df.iloc[-1]
                     prev = df.iloc[-2] if len(df) > 1 else latest
+                    old_prev = df.iloc[-3] if len(df) > 2 else prev
                     actual_date = df.index[-1].strftime('%Y-%m-%d')
                     
                     target_data[name] = {
@@ -126,7 +127,8 @@ def fetch_target_data(target_date):
                         'Volume': float(latest['Volume']),
                         'Prev_Close': float(prev['Close']),
                         'Prev_High': float(prev['High']),
-                        'Prev_Low': float(prev['Low'])
+                        'Prev_Low': float(prev['Low']),
+                        'Old_Prev_Close': float(old_prev['Close'])
                     }
         except Exception:
             pass
@@ -156,16 +158,25 @@ def load_metrics():
 def make_prediction(models, data, name):
     try:
         if name in models and data is not None:
+            gap_open = (data['Open'] / data['Prev_Close']) - 1
+            prev_range = (data['Prev_High'] - data['Prev_Low']) / data['Prev_Close']
+            return_1d = (data['Prev_Close'] / data['Old_Prev_Close']) - 1
+            
             X = pd.DataFrame([{
-                'Shifted_Open': data['Open'],
-                'Prev_Close': data['Prev_Close'],
-                'Prev_High': data['Prev_High'],
-                'Prev_Low': data['Prev_Low']
+                'Gap_Open': gap_open,
+                'Prev_Range': prev_range,
+                'Return_1d': return_1d
             }])
+            
+            pred_h_pct = models[name]['high'].predict(X)[0]
+            pred_l_pct = models[name]['low'].predict(X)[0]
+            pred_c_pct = models[name]['close'].predict(X)[0]
+            
+            open_price = data['Open']
             return {
-                'High': models[name]['high'].predict(X)[0],
-                'Low': models[name]['low'].predict(X)[0],
-                'Close': models[name]['close'].predict(X)[0]
+                'High': open_price * (1 + pred_h_pct),
+                'Low': open_price * (1 + pred_l_pct),
+                'Close': open_price * (1 + pred_c_pct)
             }
     except Exception:
         pass
