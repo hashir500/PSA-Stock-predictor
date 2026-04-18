@@ -190,6 +190,63 @@ def make_prediction(models, data, name):
             f.write(f"Error in make_prediction for {name}:\\n{traceback.format_exc()}\\n")
     return None
 
+TIMEFRAME_DAYS = {
+    "1 Month": 30,
+    "3 Months": 90,
+    "1 Year": 365
+}
+
+@st.cache_data(ttl=3600)
+def fetch_historical_series(ticker, target_date, timeframe_str):
+    import pandas as pd
+    import yfinance as yf
+    
+    days = TIMEFRAME_DAYS.get(timeframe_str, 30)
+    target_dt = pd.to_datetime(target_date)
+    start_date = (target_dt - pd.Timedelta(days=days+14)).strftime('%Y-%m-%d')
+    end_date = (target_dt + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
+    
+    df = yf.download(ticker, start=start_date, end=end_date, progress=False)
+    if df.empty:
+        return None
+        
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = [col[0] for col in df.columns]
+        
+    if df.index.tz is not None:
+        df.index = df.index.tz_localize(None)
+        
+    df = df[df.index <= pd.Timestamp(target_date)]
+    if len(df) < 4:
+        return None
+    return df
+
+def vectorize_predictions(df, model):
+    import pandas as pd
+    
+    df['Prev_Close'] = df['Close'].shift(1)
+    df['Prev_High'] = df['High'].shift(1)
+    df['Prev_Low'] = df['Low'].shift(1)
+    df['Old_Prev_Close'] = df['Close'].shift(2)
+    
+    df = df.dropna().copy()
+    if df.empty:
+        return pd.DataFrame()
+        
+    df['Gap_Open'] = (df['Open'] / df['Prev_Close']) - 1
+    df['Prev_Range'] = (df['Prev_High'] - df['Prev_Low']) / df['Prev_Close']
+    df['Return_1d'] = (df['Prev_Close'] / df['Old_Prev_Close']) - 1
+    
+    X = df[['Gap_Open', 'Prev_Range', 'Return_1d']]
+    
+    pred_c_pct = model.predict(X)
+    
+    df['Predicted_Close'] = df['Open'] * (1 + pred_c_pct)
+    df['Actual'] = df['Close']
+    df['Predicted'] = df['Predicted_Close']
+    
+    return df[['Actual', 'Predicted']]
+
 def main():
     import datetime
     
@@ -286,6 +343,31 @@ def main():
                     <div style="margin-top: 20px; color: #555;">Data Unavailable</div>
                 </div>
                 """, unsafe_allow_html=True)
+                
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown("### Detailed Analysis")
+    st.markdown("<div style='color:#888; margin-bottom:15px;'>Compare the model's theoretical trajectory against actual market history.</div>", unsafe_allow_html=True)
+    
+    c1, c2 = st.columns([1, 1])
+    with c1:
+        selected_stock = st.selectbox("Select Stock For Deep Dive", list(TICKERS.keys()))
+    with c2:
+        selected_timeframe = st.radio("Timeframe", ["1 Month", "3 Months", "1 Year"], horizontal=True)
+        
+    ticker_sym = TICKERS[selected_stock]
+    df_hist = fetch_historical_series(ticker_sym, target_date, selected_timeframe)
+    
+    if df_hist is not None and not df_hist.empty:
+        model_close = models[selected_stock]['close']
+        df_plot = vectorize_predictions(df_hist, model_close)
+        
+        if not df_plot.empty:
+            st.line_chart(df_plot, color=["#FC5C65", "#00FFC2"]) # Lava Core for Actual, Carbon Mint for Predicted
+        else:
+            st.warning("Insufficient continuous data to plot predictions.")
+    else:
+        st.warning(f"Could not retrieve historical timeline data for {selected_stock}.")
 
 if __name__ == "__main__":
     main()
+
