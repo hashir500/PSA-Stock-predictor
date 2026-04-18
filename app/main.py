@@ -155,12 +155,12 @@ def load_metrics():
 
 def make_prediction(models, data, name):
     try:
-        if name in models and name in data:
+        if name in models and data is not None:
             X = pd.DataFrame([{
-                'Shifted_Open': data[name]['Open'],
-                'Prev_Close': data[name]['Prev_Close'],
-                'Prev_High': data[name]['Prev_High'],
-                'Prev_Low': data[name]['Prev_Low']
+                'Shifted_Open': data['Open'],
+                'Prev_Close': data['Prev_Close'],
+                'Prev_High': data['Prev_High'],
+                'Prev_Low': data['Prev_Low']
             }])
             return {
                 'High': models[name]['high'].predict(X)[0],
