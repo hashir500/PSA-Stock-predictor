@@ -141,7 +141,7 @@ def fetch_target_data_v3(target_date):
     return target_data
 
 @st.cache_resource
-def load_models():
+def load_models_v2():
     models = {}
     for name in TICKERS.keys():
         try:
@@ -259,7 +259,7 @@ def main():
         
     today_data = fetch_target_data_v3(target_date)
     st.write(f"DEBUG: Retrieved {len(today_data)} stocks data. Target: {target_date}")
-    models = load_models()
+    models = load_models_v2()
     metrics = load_metrics()
     
     if not models:

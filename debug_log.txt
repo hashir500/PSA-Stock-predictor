@@ -1678,4 +1678,724 @@ training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
 ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
 expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
 training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for HUBC:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for MARI:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for PSO:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for OGDC:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for PPL:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for SEARL:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for EFERT:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for FFC:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for MEZAN:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for NATF:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for TGL:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for SYS:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for HUBC:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for MARI:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for PSO:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for OGDC:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for PPL:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for SEARL:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for EFERT:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for FFC:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for MEZAN:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for NATF:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for TGL:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for SYS:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for HUBC:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for MARI:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for PSO:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for OGDC:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for PPL:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for SEARL:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for EFERT:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for FFC:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for MEZAN:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for NATF:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for TGL:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
+\nError in make_prediction for SYS:\nTraceback (most recent call last):
+  File "/home/hashir/Documents/stock-predictor/app/main.py", line 177, in make_prediction
+    pred_h_pct = models[name]['high'].predict(X)[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/sklearn.py", line 1446, in predict
+    predts = self.get_booster().inplace_predict(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 751, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 2854, in inplace_predict
+    self._validate_features(fns)
+  File "/home/hashir/Documents/stock-predictor/venv/lib/python3.12/site-packages/xgboost/core.py", line 3429, in _validate_features
+    raise ValueError(msg.format(self.feature_names, feature_names))
+ValueError: feature_names mismatch: ['Shifted_Open', 'Prev_Close', 'Prev_High', 'Prev_Low'] ['Gap_Open', 'Prev_Range', 'Return_1d']
+expected Prev_High, Shifted_Open, Prev_Low, Prev_Close in input data
+training data did not have the following fields: Gap_Open, Prev_Range, Return_1d
 \n
