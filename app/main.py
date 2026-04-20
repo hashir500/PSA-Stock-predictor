@@ -109,7 +109,9 @@ def get_todays_intraday_ohlc(ticker):
 def fetch_target_data_v3(target_date):
     target_data = {}
     target_dt   = pd.to_datetime(target_date)
-    now_pkt     = pd.Timestamp.utcnow() + pd.Timedelta(hours=5)
+    import datetime as _dt
+    now_utc = _dt.datetime.now(_dt.timezone.utc)
+    now_pkt = pd.Timestamp(now_utc).tz_localize(None) + pd.Timedelta(hours=5)
     target_is_today = (target_date == now_pkt.date())
 
     start_date = (target_dt - pd.Timedelta(days=14)).strftime('%Y-%m-%d')
@@ -293,10 +295,16 @@ def main():
     models = load_models_v2()
     metrics = load_metrics()
 
-    # Check if any stocks are stale (yfinance lag) and prompt override
-    now_pkt = pd.Timestamp.utcnow() + pd.Timedelta(hours=5)
+    # Use stdlib datetime to get current PKT time (pd.Timestamp.utcnow deprecated in pandas 2.x)
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
+    now_pkt = now_utc + datetime.timedelta(hours=5)
     is_today_selected = (target_date == now_pkt.date())
     any_stale = any(v.get('is_stale', False) for v in today_data.values())
+
+    # Apply session_state overrides if they exist (persists across Streamlit reruns)
+    if 'overrides_applied' in st.session_state and st.session_state.overrides_applied:
+        for stock_name, override_data in st.session_state.get('override_data', {}).items():
+            today_data[stock_name] = override_data
 
     if is_today_selected and any_stale:
         st.warning(
@@ -305,7 +313,7 @@ def main():
         )
         with st.sidebar:
             st.markdown("### 📥 Opening Price Override")
-            st.markdown("Enter today's opening prices from [PSX](https://www.psx.com.pk/) or any broker app:")
+            st.markdown("Enter today's opening prices from [PSX](https://www.psx.com.pk/) or your broker app:")
             overrides = {}
             for stock_name in TICKERS.keys():
                 prev_close = today_data.get(stock_name, {}).get('Close', 0.0)
@@ -317,11 +325,11 @@ def main():
                     key=f"override_{stock_name}"
                 )
             if st.button("✅ Apply & Predict", type="primary"):
-                # Inject overrides: shift current becomes prev, use override as today Open
+                override_data = {}
                 for stock_name in TICKERS.keys():
                     if stock_name in today_data and overrides[stock_name] > 0:
                         old = today_data[stock_name]
-                        today_data[stock_name] = {
+                        override_data[stock_name] = {
                             'Actual_Date':    str(target_date) + ' (manual)',
                             'Open':           overrides[stock_name],
                             'High':           None,
@@ -335,7 +343,15 @@ def main():
                             'is_live':        True,
                             'is_stale':       False
                         }
-    
+                st.session_state.override_data = override_data
+                st.session_state.overrides_applied = True
+                st.rerun()
+            if st.session_state.get('overrides_applied'):
+                if st.button("🔄 Reset to Auto", type="secondary"):
+                    st.session_state.overrides_applied = False
+                    st.session_state.override_data = {}
+                    st.rerun()
+
     if not models:
         st.warning("Models are not trained yet. Run the training script first.")
         return
