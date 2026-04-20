@@ -316,11 +316,11 @@ def main():
             st.markdown("Enter today's opening prices from [PSX](https://www.psx.com.pk/) or your broker app:")
             overrides = {}
             for stock_name in TICKERS.keys():
-                prev_close = today_data.get(stock_name, {}).get('Close', 0.0)
+                prev_close = today_data.get(stock_name, {}).get('Close') or today_data.get(stock_name, {}).get('Open') or 0.0
                 overrides[stock_name] = st.number_input(
                     f"{stock_name} Open",
                     min_value=0.0,
-                    value=float(prev_close),
+                    value=float(prev_close) if prev_close else 0.0,
                     step=0.5,
                     key=f"override_{stock_name}"
                 )
