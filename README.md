@@ -1,8 +1,8 @@
-# 📈 PSX Pulse: Advanced Stock Predictor
+# PSX Pulse: Advanced Stock Predictor
 
 **PSX Pulse** is a minimalist, ultra-premium stock prediction dashboard designed specifically for the Pakistan Stock Exchange (PSX). It utilizes an advanced XGBoost Machine Learning pipeline to dynamically predict the End-of-Day Trajectories for 12 major PSX heavyweight tickers.
 
-### ✨ Features
+### Features
 *   **"Anti-Gravity" UI:** Built entirely on a custom-injected CSS glassmorphic aesthetic (Carbon-Mint and Lava-Core visual mapping).
 *   **Predictive Engine:** An XGBoost Regressor trained across 5 years of daily market contexts, mapping relative variance features (`Gap_Open`, `Return_1d`, `Prev_Range`) to achieve an extreme mathematical noise floor (cross-board Model MAE of ~1.4%).
 *   **Real-time Fundamental Context:** Instantly fetches the live Market Capitalization, Trailing P/E Ratios, and Dividend Yields using integrated `yfinance` bridging.
@@ -10,7 +10,7 @@
 
 ---
 
-## 🚀 Local Installation
+## Local Installation
 
 1. **Clone the Repository**
    ```bash
@@ -38,7 +38,7 @@
 
 ---
 
-## ☁️ Deploying to Streamlit Community Cloud
+## Deploying to Streamlit Community Cloud
 
 Hosting this application natively on the web for free is incredibly easy using Streamlit Community Cloud:
 

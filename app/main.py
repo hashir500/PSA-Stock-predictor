@@ -97,13 +97,42 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODELS_DIR = os.path.join(BASE_DIR, 'models')
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 
-@st.cache_data(ttl=300) # Cache for 5 mins
+# PKT = UTC+5. Market hours: 09:30–16:30 PKT → 04:30–11:30 UTC
+PKT_OFFSET = pd.Timedelta(hours=5)
+
+def get_todays_open(ticker):
+    """Fetch today's opening price via 5-min intraday bar (available immediately at market open)."""
+    try:
+        df_intra = yf.download(ticker, period='1d', interval='5m', progress=False)
+        if df_intra.empty:
+            return None
+        if isinstance(df_intra.columns, pd.MultiIndex):
+            df_intra.columns = [col[0] for col in df_intra.columns]
+        if df_intra.index.tz is not None:
+            df_intra.index = df_intra.index.tz_convert('UTC').tz_localize(None)
+        # First 5-min bar Open = today's market open price
+        return float(df_intra.iloc[0]['Open'])
+    except:
+        return None
+
+@st.cache_data(ttl=120)  # 2-min cache during live market to pick up fresh opens
 def fetch_target_data_v3(target_date):
     target_data = {}
-    import pandas as pd
     target_dt = pd.to_datetime(target_date)
+    now_pkt = pd.Timestamp.utcnow() + PKT_OFFSET
+    target_is_today = target_date == now_pkt.date()
+    
+    # Determine if market is currently live (Mon-Fri 09:29–16:31 PKT)
+    market_open  = now_pkt.replace(hour=9,  minute=29, second=0)
+    market_close = now_pkt.replace(hour=16, minute=31, second=0)
+    is_live_market = (
+        target_is_today and
+        now_pkt.weekday() < 5 and
+        market_open <= now_pkt <= market_close
+    )
+    
     start_date = (target_dt - pd.Timedelta(days=14)).strftime('%Y-%m-%d')
-    end_date = (target_dt + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
+    end_date   = (target_dt + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
     
     for name, ticker in TICKERS.items():
         try:
@@ -111,32 +140,50 @@ def fetch_target_data_v3(target_date):
             if not df.empty:
                 if isinstance(df.columns, pd.MultiIndex):
                     df.columns = [col[0] for col in df.columns]
-                
-                # Force index to be timezone-naive to prevent TypeError crash
                 if df.index.tz is not None:
                     df.index = df.index.tz_localize(None)
-                
-                # Filter to only rows on or before the target date
                 df = df[df.index <= pd.Timestamp(target_date)]
                 
                 if len(df) > 0:
                     latest = df.iloc[-1]
-                    prev = df.iloc[-2] if len(df) > 1 else latest
+                    latest_date = df.index[-1].date()
+                    prev    = df.iloc[-2] if len(df) > 1 else latest
                     old_prev = df.iloc[-3] if len(df) > 2 else prev
-                    actual_date = df.index[-1].strftime('%Y-%m-%d')
                     
-                    target_data[name] = {
-                        'Actual_Date': actual_date,
-                        'Open': float(latest['Open']),
-                        'High': float(latest['High']),
-                        'Low': float(latest['Low']),
-                        'Close': float(latest['Close']),
-                        'Volume': float(latest['Volume']),
-                        'Prev_Close': float(prev['Close']),
-                        'Prev_High': float(prev['High']),
-                        'Prev_Low': float(prev['Low']),
-                        'Old_Prev_Close': float(old_prev['Close'])
-                    }
+                    # --- Live market mode: daily bar not yet published for today ---
+                    if is_live_market and latest_date < now_pkt.date():
+                        live_open = get_todays_open(ticker)
+                        if live_open is None:
+                            live_open = float(latest['Close'])  # fallback: prev close
+                        # For prediction, use yesterday's close row as context
+                        # but substitute live_open as today's open
+                        target_data[name] = {
+                            'Actual_Date': now_pkt.strftime('%Y-%m-%d') + ' (LIVE)',
+                            'Open':         live_open,
+                            'High':         None,   # not yet available
+                            'Low':          None,
+                            'Close':        None,
+                            'Volume':       None,
+                            'Prev_Close':   float(latest['Close']),
+                            'Prev_High':    float(latest['High']),
+                            'Prev_Low':     float(latest['Low']),
+                            'Old_Prev_Close': float(prev['Close']),
+                            'is_live':      True
+                        }
+                    else:
+                        target_data[name] = {
+                            'Actual_Date': latest_date.strftime('%Y-%m-%d'),
+                            'Open':  float(latest['Open']),
+                            'High':  float(latest['High']),
+                            'Low':   float(latest['Low']),
+                            'Close': float(latest['Close']),
+                            'Volume': float(latest['Volume']),
+                            'Prev_Close':   float(prev['Close']),
+                            'Prev_High':    float(prev['High']),
+                            'Prev_Low':     float(prev['Low']),
+                            'Old_Prev_Close': float(old_prev['Close']),
+                            'is_live': False
+                        }
         except Exception as e:
             import traceback
             with open('debug_log.txt', 'a') as f:
@@ -279,7 +326,6 @@ def main():
         target_date = st.date_input("Select Target Date", datetime.date.today(), min_value=min_date, max_value=datetime.date.today())
         
     today_data = fetch_target_data_v3(target_date)
-    st.write(f"DEBUG: Retrieved {len(today_data)} stocks data. Target: {target_date}")
     models = load_models_v2()
     metrics = load_metrics()
     
@@ -300,62 +346,94 @@ def main():
         
         with col:
             if current_data and preds:
-                # Decide if actuals are available (if the market is deep in the day, High/Low track Actuals)
-                # We'll just show actual vs predicted simply
-                actual_close = current_data['Close']
-                pred_close = preds['Close']
-                diff = actual_close - pred_close
-                color_class = "carbon-mint" if diff >= 0 else "lava-core"
-                sign = "+" if diff >= 0 else ""
-                
-                h_diff = current_data['High'] - preds['High']
-                h_sign = "+" if h_diff >= 0 else ""
-                h_color = "#00FFC2" if h_diff >= 0 else "#FC5C65"
-
-                l_diff = current_data['Low'] - preds['Low']
-                l_sign = "+" if l_diff >= 0 else ""
-                l_color = "#00FFC2" if l_diff >= 0 else "#FC5C65"
-                
-                # Check accuracy badge
+                is_live = current_data.get('is_live', False)
                 mae_str = m_info["MAE_Pct"]
                 badge_html = f"<span class='badge'>MAE: {mae_str}%</span>" if mae_str != "--" else ""
-                
-                st.markdown(f"""
-                <div class="metric-card">
-                    <h2>{name} {badge_html}</h2>
-                    <div style="font-size: 0.9rem; color: #888;">{ticker} | Date: {current_data.get('Actual_Date', '')}</div>
-                    <div class="price {color_class}">
-                        Rs {actual_close:.2f}
-                        <span style="font-size: 1rem; opacity: 0.8;">({sign}{diff:.2f})</span>
+                live_label = "<span style='background:rgba(252,92,101,0.2);color:#FC5C65;padding:3px 8px;border-radius:10px;font-size:0.7rem;font-weight:700;border:1px solid rgba(252,92,101,0.4);margin-left:8px;vertical-align:middle;'>🔴 LIVE</span>" if is_live else ""
+
+                if is_live:
+                    # --- LIVE mode: Actuals not available yet, show predictions only ---
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <h2>{name} {badge_html} {live_label}</h2>
+                        <div style="font-size: 0.9rem; color: #888;">{ticker} | {current_data.get('Actual_Date', '')}</div>
+                        <div class="price carbon-mint" style="font-size:1.4rem; margin-top:10px;">Open: Rs {current_data['Open']:.2f}</div>
+                        <table style="width:100%; text-align:left; font-size:0.85rem; border-collapse:collapse; margin-top:15px; background: rgba(0,0,0,0.2); border-radius:8px; overflow:hidden;">
+                            <tr style="background: rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <th style="padding:6px 10px; color:#aaa; font-weight:500;">Metric</th>
+                                <th style="padding:6px 10px; color:#aaa; font-weight:500;">Predicted</th>
+                                <th style="padding:6px 10px; color:#aaa; font-weight:500;">Actual</th>
+                            </tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                                <td style="padding:6px 10px; color:#ddd;">High</td>
+                                <td style="padding:6px 10px; color:#00FFC2;">{preds['High']:.2f}</td>
+                                <td style="padding:6px 10px; color:#555;">Pending...</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                                <td style="padding:6px 10px; color:#ddd;">Low</td>
+                                <td style="padding:6px 10px; color:#00FFC2;">{preds['Low']:.2f}</td>
+                                <td style="padding:6px 10px; color:#555;">Pending...</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:6px 10px; color:#ddd;">Close</td>
+                                <td style="padding:6px 10px; color:#00FFC2;">{preds['Close']:.2f}</td>
+                                <td style="padding:6px 10px; color:#555;">Pending...</td>
+                            </tr>
+                        </table>
                     </div>
-                    <table style="width:100%; text-align:left; font-size:0.85rem; border-collapse:collapse; margin-top:15px; background: rgba(0,0,0,0.2); border-radius:8px; overflow:hidden;">
-                        <tr style="background: rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.1);">
-                            <th style="padding:6px 10px; color:#aaa; font-weight:500;">Metric</th>
-                            <th style="padding:6px 10px; color:#aaa; font-weight:500;">Predicted</th>
-                            <th style="padding:6px 10px; color:#aaa; font-weight:500;">Actual</th>
-                            <th style="padding:6px 10px; color:#aaa; font-weight:500;">Diff</th>
-                        </tr>
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <td style="padding:6px 10px; color:#ddd;">High</td>
-                            <td style="padding:6px 10px;">{preds['High']:.2f}</td>
-                            <td style="padding:6px 10px;">{current_data['High']:.2f}</td>
-                            <td style="padding:6px 10px; color:{h_color};">{h_sign}{h_diff:.2f}</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <td style="padding:6px 10px; color:#ddd;">Low</td>
-                            <td style="padding:6px 10px;">{preds['Low']:.2f}</td>
-                            <td style="padding:6px 10px;">{current_data['Low']:.2f}</td>
-                            <td style="padding:6px 10px; color:{l_color};">{l_sign}{l_diff:.2f}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:6px 10px; color:#ddd;">Open</td>
-                            <td style="padding:6px 10px; color:#888;">--</td>
-                            <td style="padding:6px 10px;">{current_data['Open']:.2f}</td>
-                            <td style="padding:6px 10px; color:#888;">--</td>
-                        </tr>
-                    </table>
-                </div>
-                """, unsafe_allow_html=True)
+                    """, unsafe_allow_html=True)
+                else:
+                    # --- Historical mode: show full Predicted vs Actual ---
+                    actual_close = current_data['Close']
+                    pred_close   = preds['Close']
+                    diff         = actual_close - pred_close
+                    color_class  = "carbon-mint" if diff >= 0 else "lava-core"
+                    sign         = "+" if diff >= 0 else ""
+
+                    h_diff  = current_data['High'] - preds['High']
+                    h_sign  = "+" if h_diff >= 0 else ""
+                    h_color = "#00FFC2" if h_diff >= 0 else "#FC5C65"
+
+                    l_diff  = current_data['Low'] - preds['Low']
+                    l_sign  = "+" if l_diff >= 0 else ""
+                    l_color = "#00FFC2" if l_diff >= 0 else "#FC5C65"
+
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <h2>{name} {badge_html}</h2>
+                        <div style="font-size: 0.9rem; color: #888;">{ticker} | Date: {current_data.get('Actual_Date', '')}</div>
+                        <div class="price {color_class}">
+                            Rs {actual_close:.2f}
+                            <span style="font-size: 1rem; opacity: 0.8;">({sign}{diff:.2f})</span>
+                        </div>
+                        <table style="width:100%; text-align:left; font-size:0.85rem; border-collapse:collapse; margin-top:15px; background: rgba(0,0,0,0.2); border-radius:8px; overflow:hidden;">
+                            <tr style="background: rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <th style="padding:6px 10px; color:#aaa; font-weight:500;">Metric</th>
+                                <th style="padding:6px 10px; color:#aaa; font-weight:500;">Predicted</th>
+                                <th style="padding:6px 10px; color:#aaa; font-weight:500;">Actual</th>
+                                <th style="padding:6px 10px; color:#aaa; font-weight:500;">Diff</th>
+                            </tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                                <td style="padding:6px 10px; color:#ddd;">High</td>
+                                <td style="padding:6px 10px;">{preds['High']:.2f}</td>
+                                <td style="padding:6px 10px;">{current_data['High']:.2f}</td>
+                                <td style="padding:6px 10px; color:{h_color};">{h_sign}{h_diff:.2f}</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                                <td style="padding:6px 10px; color:#ddd;">Low</td>
+                                <td style="padding:6px 10px;">{preds['Low']:.2f}</td>
+                                <td style="padding:6px 10px;">{current_data['Low']:.2f}</td>
+                                <td style="padding:6px 10px; color:{l_color};">{l_sign}{l_diff:.2f}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:6px 10px; color:#ddd;">Open</td>
+                                <td style="padding:6px 10px; color:#888;">--</td>
+                                <td style="padding:6px 10px;">{current_data['Open']:.2f}</td>
+                                <td style="padding:6px 10px; color:#888;">--</td>
+                            </tr>
+                        </table>
+                    </div>
+                    """, unsafe_allow_html=True)
             else:
                 st.markdown(f"""
                 <div class="metric-card">
