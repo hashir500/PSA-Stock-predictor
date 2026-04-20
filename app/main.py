@@ -101,43 +101,19 @@ DATA_DIR = os.path.join(BASE_DIR, 'data')
 PKT_OFFSET = pd.Timedelta(hours=5)
 
 def get_todays_intraday_ohlc(ticker):
-    """
-    Reconstruct today's OHLC from 5-min intraday bars.
-    Works during live market AND after close (before yfinance publishes
-    the daily bar, which can lag many hours for PSX .KA stocks).
-    """
-    try:
-        df_intra = yf.download(ticker, period='1d', interval='5m', progress=False)
-        if df_intra.empty:
-            return None
-        if isinstance(df_intra.columns, pd.MultiIndex):
-            df_intra.columns = [col[0] for col in df_intra.columns]
-        if df_intra.index.tz is not None:
-            df_intra.index = df_intra.index.tz_convert('UTC').tz_localize(None)
-        now_pkt = pd.Timestamp.utcnow() + PKT_OFFSET
-        mkt_open  = now_pkt.replace(hour=9,  minute=29, second=0)
-        mkt_close = now_pkt.replace(hour=16, minute=31, second=0)
-        is_market_open = (now_pkt.weekday() < 5 and mkt_open <= now_pkt <= mkt_close)
-        return {
-            'Open':           float(df_intra.iloc[0]['Open']),
-            'High':           float(df_intra['High'].max()),
-            'Low':            float(df_intra['Low'].min()),
-            'Close':          float(df_intra.iloc[-1]['Close']),
-            'Volume':         float(df_intra['Volume'].sum()),
-            'is_market_open': is_market_open
-        }
-    except:
-        return None
+    """PSX .KA tickers: Yahoo Finance does NOT provide intraday data.
+    This function is kept as a stub for future compatibility."""
+    return None
 
-@st.cache_data(ttl=120)  # 2-min cache so intraday prices stay fresh
+@st.cache_data(ttl=300)  # 5-min cache
 def fetch_target_data_v3(target_date):
-    target_data     = {}
-    target_dt       = pd.to_datetime(target_date)
-    now_pkt         = pd.Timestamp.utcnow() + PKT_OFFSET
+    target_data = {}
+    target_dt   = pd.to_datetime(target_date)
+    now_pkt     = pd.Timestamp.utcnow() + pd.Timedelta(hours=5)
     target_is_today = (target_date == now_pkt.date())
 
     start_date = (target_dt - pd.Timedelta(days=14)).strftime('%Y-%m-%d')
-    end_date   = (target_dt + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
+    end_date   = (target_dt + pd.Timedelta(days=2)).strftime('%Y-%m-%d')  # +2 to catch today if published
 
     for name, ticker in TICKERS.items():
         try:
@@ -155,60 +131,23 @@ def fetch_target_data_v3(target_date):
                     prev        = df.iloc[-2] if len(df) > 1 else latest
                     old_prev    = df.iloc[-3] if len(df) > 2 else prev
 
-                    # ----------------------------------------------------------
-                    # KEY FIX: If today was selected but yfinance hasn't yet
-                    # published today's daily bar (common for PSX .KA tickers
-                    # — can lag until the NEXT morning), fall back to intraday
-                    # 5-min data to reconstruct today's OHLC.
-                    # This covers BOTH live-market AND after-hours scenarios.
-                    # ----------------------------------------------------------
-                    if target_is_today and latest_date < now_pkt.date():
-                        intra = get_todays_intraday_ohlc(ticker)
-                        if intra:
-                            is_live = intra['is_market_open']
-                            target_data[name] = {
-                                'Actual_Date':    now_pkt.strftime('%Y-%m-%d') + (' (LIVE)' if is_live else ''),
-                                'Open':           intra['Open'],
-                                # During live hours High/Low/Close are still evolving
-                                'High':           None if is_live else intra['High'],
-                                'Low':            None if is_live else intra['Low'],
-                                'Close':          None if is_live else intra['Close'],
-                                'Volume':         intra['Volume'],
-                                'Prev_Close':     float(latest['Close']),
-                                'Prev_High':      float(latest['High']),
-                                'Prev_Low':       float(latest['Low']),
-                                'Old_Prev_Close': float(prev['Close']),
-                                'is_live':        is_live
-                            }
-                        else:
-                            # Intraday also unavailable — show last known bar with warning
-                            target_data[name] = {
-                                'Actual_Date':    latest_date.strftime('%Y-%m-%d') + ' (delayed)',
-                                'Open':           float(latest['Open']),
-                                'High':           float(latest['High']),
-                                'Low':            float(latest['Low']),
-                                'Close':          float(latest['Close']),
-                                'Volume':         float(latest['Volume']),
-                                'Prev_Close':     float(prev['Close']),
-                                'Prev_High':      float(prev['High']),
-                                'Prev_Low':       float(prev['Low']),
-                                'Old_Prev_Close': float(old_prev['Close']),
-                                'is_live':        False
-                            }
-                    else:
-                        target_data[name] = {
-                            'Actual_Date':    latest_date.strftime('%Y-%m-%d'),
-                            'Open':           float(latest['Open']),
-                            'High':           float(latest['High']),
-                            'Low':            float(latest['Low']),
-                            'Close':          float(latest['Close']),
-                            'Volume':         float(latest['Volume']),
-                            'Prev_Close':     float(prev['Close']),
-                            'Prev_High':      float(prev['High']),
-                            'Prev_Low':       float(prev['Low']),
-                            'Old_Prev_Close': float(old_prev['Close']),
-                            'is_live':        False
-                        }
+                    # Tag whether yfinance returned today or a stale previous day
+                    is_stale = target_is_today and (latest_date < now_pkt.date())
+
+                    target_data[name] = {
+                        'Actual_Date':    latest_date.strftime('%Y-%m-%d') + (' ⚠ delayed' if is_stale else ''),
+                        'Open':           float(latest['Open']),
+                        'High':           float(latest['High']),
+                        'Low':            float(latest['Low']),
+                        'Close':          float(latest['Close']),
+                        'Volume':         float(latest['Volume']),
+                        'Prev_Close':     float(prev['Close']),
+                        'Prev_High':      float(prev['High']),
+                        'Prev_Low':       float(prev['Low']),
+                        'Old_Prev_Close': float(old_prev['Close']),
+                        'is_live':        False,
+                        'is_stale':       is_stale
+                    }
         except Exception as e:
             import traceback
             with open('debug_log.txt', 'a') as f:
@@ -349,10 +288,53 @@ def main():
     with col_picker:
         min_date = datetime.date.today() - datetime.timedelta(days=700)
         target_date = st.date_input("Select Target Date", datetime.date.today(), min_value=min_date, max_value=datetime.date.today())
-        
+
     today_data = fetch_target_data_v3(target_date)
     models = load_models_v2()
     metrics = load_metrics()
+
+    # Check if any stocks are stale (yfinance lag) and prompt override
+    now_pkt = pd.Timestamp.utcnow() + pd.Timedelta(hours=5)
+    is_today_selected = (target_date == now_pkt.date())
+    any_stale = any(v.get('is_stale', False) for v in today_data.values())
+
+    if is_today_selected and any_stale:
+        st.warning(
+            f"⚠️ Yahoo Finance hasn't published today's ({target_date}) daily bars for PSX yet (this can lag up to 24h). "
+            "Use the **Opening Price Override** in the sidebar to manually enter today's opening prices for instant predictions."
+        )
+        with st.sidebar:
+            st.markdown("### 📥 Opening Price Override")
+            st.markdown("Enter today's opening prices from [PSX](https://www.psx.com.pk/) or any broker app:")
+            overrides = {}
+            for stock_name in TICKERS.keys():
+                prev_close = today_data.get(stock_name, {}).get('Close', 0.0)
+                overrides[stock_name] = st.number_input(
+                    f"{stock_name} Open",
+                    min_value=0.0,
+                    value=float(prev_close),
+                    step=0.5,
+                    key=f"override_{stock_name}"
+                )
+            if st.button("✅ Apply & Predict", type="primary"):
+                # Inject overrides: shift current becomes prev, use override as today Open
+                for stock_name in TICKERS.keys():
+                    if stock_name in today_data and overrides[stock_name] > 0:
+                        old = today_data[stock_name]
+                        today_data[stock_name] = {
+                            'Actual_Date':    str(target_date) + ' (manual)',
+                            'Open':           overrides[stock_name],
+                            'High':           None,
+                            'Low':            None,
+                            'Close':          None,
+                            'Volume':         old.get('Volume'),
+                            'Prev_Close':     old['Close'],
+                            'Prev_High':      old['High'],
+                            'Prev_Low':       old['Low'],
+                            'Old_Prev_Close': old['Prev_Close'],
+                            'is_live':        True,
+                            'is_stale':       False
+                        }
     
     if not models:
         st.warning("Models are not trained yet. Run the training script first.")
