@@ -100,8 +100,12 @@ DATA_DIR = os.path.join(BASE_DIR, 'data')
 # PKT = UTC+5. Market hours: 09:30–16:30 PKT → 04:30–11:30 UTC
 PKT_OFFSET = pd.Timedelta(hours=5)
 
-def get_todays_open(ticker):
-    """Fetch today's opening price via 5-min intraday bar (available immediately at market open)."""
+def get_todays_intraday_ohlc(ticker):
+    """
+    Reconstruct today's OHLC from 5-min intraday bars.
+    Works during live market AND after close (before yfinance publishes
+    the daily bar, which can lag many hours for PSX .KA stocks).
+    """
     try:
         df_intra = yf.download(ticker, period='1d', interval='5m', progress=False)
         if df_intra.empty:
@@ -110,30 +114,31 @@ def get_todays_open(ticker):
             df_intra.columns = [col[0] for col in df_intra.columns]
         if df_intra.index.tz is not None:
             df_intra.index = df_intra.index.tz_convert('UTC').tz_localize(None)
-        # First 5-min bar Open = today's market open price
-        return float(df_intra.iloc[0]['Open'])
+        now_pkt = pd.Timestamp.utcnow() + PKT_OFFSET
+        mkt_open  = now_pkt.replace(hour=9,  minute=29, second=0)
+        mkt_close = now_pkt.replace(hour=16, minute=31, second=0)
+        is_market_open = (now_pkt.weekday() < 5 and mkt_open <= now_pkt <= mkt_close)
+        return {
+            'Open':           float(df_intra.iloc[0]['Open']),
+            'High':           float(df_intra['High'].max()),
+            'Low':            float(df_intra['Low'].min()),
+            'Close':          float(df_intra.iloc[-1]['Close']),
+            'Volume':         float(df_intra['Volume'].sum()),
+            'is_market_open': is_market_open
+        }
     except:
         return None
 
-@st.cache_data(ttl=120)  # 2-min cache during live market to pick up fresh opens
+@st.cache_data(ttl=120)  # 2-min cache so intraday prices stay fresh
 def fetch_target_data_v3(target_date):
-    target_data = {}
-    target_dt = pd.to_datetime(target_date)
-    now_pkt = pd.Timestamp.utcnow() + PKT_OFFSET
-    target_is_today = target_date == now_pkt.date()
-    
-    # Determine if market is currently live (Mon-Fri 09:29–16:31 PKT)
-    market_open  = now_pkt.replace(hour=9,  minute=29, second=0)
-    market_close = now_pkt.replace(hour=16, minute=31, second=0)
-    is_live_market = (
-        target_is_today and
-        now_pkt.weekday() < 5 and
-        market_open <= now_pkt <= market_close
-    )
-    
+    target_data     = {}
+    target_dt       = pd.to_datetime(target_date)
+    now_pkt         = pd.Timestamp.utcnow() + PKT_OFFSET
+    target_is_today = (target_date == now_pkt.date())
+
     start_date = (target_dt - pd.Timedelta(days=14)).strftime('%Y-%m-%d')
     end_date   = (target_dt + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
-    
+
     for name, ticker in TICKERS.items():
         try:
             df = yf.download(ticker, start=start_date, end=end_date, progress=False)
@@ -143,51 +148,71 @@ def fetch_target_data_v3(target_date):
                 if df.index.tz is not None:
                     df.index = df.index.tz_localize(None)
                 df = df[df.index <= pd.Timestamp(target_date)]
-                
+
                 if len(df) > 0:
-                    latest = df.iloc[-1]
+                    latest      = df.iloc[-1]
                     latest_date = df.index[-1].date()
-                    prev    = df.iloc[-2] if len(df) > 1 else latest
-                    old_prev = df.iloc[-3] if len(df) > 2 else prev
-                    
-                    # --- Live market mode: daily bar not yet published for today ---
-                    if is_live_market and latest_date < now_pkt.date():
-                        live_open = get_todays_open(ticker)
-                        if live_open is None:
-                            live_open = float(latest['Close'])  # fallback: prev close
-                        # For prediction, use yesterday's close row as context
-                        # but substitute live_open as today's open
-                        target_data[name] = {
-                            'Actual_Date': now_pkt.strftime('%Y-%m-%d') + ' (LIVE)',
-                            'Open':         live_open,
-                            'High':         None,   # not yet available
-                            'Low':          None,
-                            'Close':        None,
-                            'Volume':       None,
-                            'Prev_Close':   float(latest['Close']),
-                            'Prev_High':    float(latest['High']),
-                            'Prev_Low':     float(latest['Low']),
-                            'Old_Prev_Close': float(prev['Close']),
-                            'is_live':      True
-                        }
+                    prev        = df.iloc[-2] if len(df) > 1 else latest
+                    old_prev    = df.iloc[-3] if len(df) > 2 else prev
+
+                    # ----------------------------------------------------------
+                    # KEY FIX: If today was selected but yfinance hasn't yet
+                    # published today's daily bar (common for PSX .KA tickers
+                    # — can lag until the NEXT morning), fall back to intraday
+                    # 5-min data to reconstruct today's OHLC.
+                    # This covers BOTH live-market AND after-hours scenarios.
+                    # ----------------------------------------------------------
+                    if target_is_today and latest_date < now_pkt.date():
+                        intra = get_todays_intraday_ohlc(ticker)
+                        if intra:
+                            is_live = intra['is_market_open']
+                            target_data[name] = {
+                                'Actual_Date':    now_pkt.strftime('%Y-%m-%d') + (' (LIVE)' if is_live else ''),
+                                'Open':           intra['Open'],
+                                # During live hours High/Low/Close are still evolving
+                                'High':           None if is_live else intra['High'],
+                                'Low':            None if is_live else intra['Low'],
+                                'Close':          None if is_live else intra['Close'],
+                                'Volume':         intra['Volume'],
+                                'Prev_Close':     float(latest['Close']),
+                                'Prev_High':      float(latest['High']),
+                                'Prev_Low':       float(latest['Low']),
+                                'Old_Prev_Close': float(prev['Close']),
+                                'is_live':        is_live
+                            }
+                        else:
+                            # Intraday also unavailable — show last known bar with warning
+                            target_data[name] = {
+                                'Actual_Date':    latest_date.strftime('%Y-%m-%d') + ' (delayed)',
+                                'Open':           float(latest['Open']),
+                                'High':           float(latest['High']),
+                                'Low':            float(latest['Low']),
+                                'Close':          float(latest['Close']),
+                                'Volume':         float(latest['Volume']),
+                                'Prev_Close':     float(prev['Close']),
+                                'Prev_High':      float(prev['High']),
+                                'Prev_Low':       float(prev['Low']),
+                                'Old_Prev_Close': float(old_prev['Close']),
+                                'is_live':        False
+                            }
                     else:
                         target_data[name] = {
-                            'Actual_Date': latest_date.strftime('%Y-%m-%d'),
-                            'Open':  float(latest['Open']),
-                            'High':  float(latest['High']),
-                            'Low':   float(latest['Low']),
-                            'Close': float(latest['Close']),
-                            'Volume': float(latest['Volume']),
-                            'Prev_Close':   float(prev['Close']),
-                            'Prev_High':    float(prev['High']),
-                            'Prev_Low':     float(prev['Low']),
+                            'Actual_Date':    latest_date.strftime('%Y-%m-%d'),
+                            'Open':           float(latest['Open']),
+                            'High':           float(latest['High']),
+                            'Low':            float(latest['Low']),
+                            'Close':          float(latest['Close']),
+                            'Volume':         float(latest['Volume']),
+                            'Prev_Close':     float(prev['Close']),
+                            'Prev_High':      float(prev['High']),
+                            'Prev_Low':       float(prev['Low']),
                             'Old_Prev_Close': float(old_prev['Close']),
-                            'is_live': False
+                            'is_live':        False
                         }
         except Exception as e:
             import traceback
             with open('debug_log.txt', 'a') as f:
-                f.write(f"Error in fetch for {name}:\\n{traceback.format_exc()}\\n")
+                f.write(f"Error in fetch for {name}:\n{traceback.format_exc()}\n")
     return target_data
 
 @st.cache_resource
